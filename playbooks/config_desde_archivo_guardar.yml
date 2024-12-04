@@ -1,0 +1,28 @@
+
+---
+- name: Ejecutar comandos desde un archivo y guardar resultados localmente
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+
+    - name: Leer configuraciones desde un archivo
+      slurp:
+        src: ../config/config_vlan.txt
+      register: vlan_file
+
+    - name: Convertir contenido del archivo a texto
+      set_fact:
+        vlan_commands: "{{ vlan_file.content | b64decode | split('\n') }}"
+
+    - name: Aplicar configuraciones al dispositivo sin guardar
+      ios_config:
+        backup: yes
+        lines: "{{ vlan_commands }}"
+        save_when: never
+      register: vlan_application_output
+
+    - name: Guardar la salida del resultado en un archivo local
+      copy:
+        content: "{{ vlan_application_output.responses | join('\n') }}"
+        dest: ../config/vlan_application_result.txt

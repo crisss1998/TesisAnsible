@@ -1,0 +1,25 @@
+---
+- name: Crear 100 VLANs sin guardar configuraciones permanentemente
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+    
+    - name: Generar lista de comandos para crear VLANs
+      set_fact:
+        vlan_commands: |
+          {% for i in range(1, 101) %}
+          vlan {{ i }}
+          {% endfor %}
+    
+    - name: Crear VLANs en el dispositivo sin guardar configuración
+      ios_config:
+        backup: yes
+        lines: "{{ vlan_commands.split('\n') }}"
+        save_when: never
+      register: vlan_creation_output
+
+    - name: Guardar la salida en un archivo local
+      copy:
+        content: "{{ vlan_creation_output['changed'] | ternary('VLANs configuradas sin guardar.', 'No se realizaron cambios.') }}"
+        dest: ./vlan_creation_result.txt

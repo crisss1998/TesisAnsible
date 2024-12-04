@@ -1,0 +1,26 @@
+---
+- name: Crear 100 VLANs y guardar la salida en un archivo
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: switches
+  tasks:
+    
+    - name: Generar lista de comandos para crear VLANs
+      set_fact:
+        vlan_commands: |
+          {% for i in range(100, 201) %}
+          vlan {{ i }}
+          name VLAN_{{ i }}
+          {% endfor %}
+    
+    - name: Crear VLANs en el dispositivo
+      ios_config:
+        backup: yes
+        lines: "{{ vlan_commands.split('\n') }}"
+        save_when: never
+      register: vlan_creation_output
+
+    - name: Guardar la salida en un archivo local
+      copy:
+        content: "{{ vlan_creation_output.stdout }}"
+        dest: ./vlan_creation_result.txt

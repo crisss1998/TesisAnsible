@@ -1,0 +1,23 @@
+---
+- name: Aplicar configuraciones desde un archivo
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+
+    - name: Leer configuraciones desde un archivo
+      slurp:
+        src: ../config/vlan_config.txt
+      register: vlan_file
+
+    - name: Convertir contenido del archivo a texto
+      set_fact:
+        vlan_commands: "{{ vlan_file.content | b64decode | split('\n') }}"
+
+    - name: Aplicar configuraciones al dispositivo
+      ios_config:
+        backup: yes
+        lines: "{{ vlan_commands }}"
+        save_when: never
+      register: vlan_application_output
+

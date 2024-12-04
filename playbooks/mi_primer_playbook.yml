@@ -1,0 +1,15 @@
+---
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+
+    - name: Obtener las configuraciones de los Equipos de Red
+      ios_facts:
+        gather_subset: all
+
+    - name: Mostrar la configuracion del Equipo
+      debug:
+        msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"

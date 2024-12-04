@@ -1,0 +1,3 @@
+interface range FastEthernet 0/3 - 20
+shutdown
+no shutdown

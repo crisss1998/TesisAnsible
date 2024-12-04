@@ -1,0 +1,5 @@
+interface range FastEthernet 0/5- 0/20 
+switchport port-security
+switchport port-security maximun 2
+switchport port-security violation shutdown
+switchport port-security mac-adress sticky

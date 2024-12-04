@@ -1,0 +1,14 @@
+ip dhcp pool Departamento
+network 10.0.10.0 255.255.255.0
+default-router 10.0.10.1
+dns-server 8.8.8.8
+lease 7
+exit
+ip dhcp excluded-address 10.0.10.1 10.0.10.3
+ip dhcp pool Control
+network 10.0.99.0 255.255.255.0
+default-router 10.0.99.1
+dns-server 8.8.8.8
+lease 7
+exit
+ip dhcp excluded-address 10.0.99.1 10.0.99.3

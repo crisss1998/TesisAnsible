@@ -1,0 +1,21 @@
+---
+- name: CONFIGURAR DHCP EN LA RED
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+
+    - name:  LEER CONFIGURACIONES A APLICAR
+      slurp:
+        src: ../config/config_dhcp.txt
+      register: dhcp_file
+
+    - name: CONVERTIR EL TEXTO DEL ARCHIVO EN COMANDOS
+      set_fact:
+        dhcp_commands: "{{ dhcp_file.content | b64decode | split('\n') }}"
+
+    - name: APLICAR CONFIGURACIONES DE DHCP EN LOS EQUIPOS DE RED
+      ios_config:
+        backup: yes
+        lines: "{{ dhcp_commands }}"
+        save_when: never
